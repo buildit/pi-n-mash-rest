@@ -26,8 +26,12 @@ const startSession = () => {
     face: false
   };
   sessionTimeout = setTimeout(() => {
-    console.log('session time out');
-    killSession();
+    if (isAuthenticated(activeSession)) {
+      console.log('timer expired, session active');
+    } else {
+      console.log('session time out');
+      killSession();
+    }
   }, 1200000);
   console.log('session started');
 };
