@@ -3,7 +3,10 @@ import json
 
 urls = (
 	'/', 'index',
-    '/api/auth/fingerprint/(\d+)', 'fingerprint'
+    '/api/auth/fingerprint/(.+)', 'fingerprint',
+    '/api/auth/motion/(.+)', 'motion',
+    '/api/auth/face/(.+)', 'face',
+    '/api/auth/voice/(.+)', 'voice'
 )
 
 class index:
