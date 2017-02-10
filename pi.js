@@ -42,12 +42,35 @@ const sendMessage = (message) => {
 let timer = null;
 let countdownValue = 0;
 const startCountdown = () => {
-  sendMessage('begin');
   countdownValue = 60;
   timer = setInterval(countdown, 1000);
 }
 
 const e = [0,0,0];
+const w = [255,255,255];
+const r = [255,0,0];
+
+const emptyMatrix = [
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+  e, e, e, e, e, e, e, e,
+];
+const redMatrix = [
+  r, w, w, w, w, w, w, r,
+  w, r, w, w, w, w, r, w,
+  w, w, r, w, w, r, w, w,
+  w, w, w, r, r, w, w, w,
+  w, w, w, r, w, w, w, w,
+  w, w, r, w, w, r, w, w,
+  w, r, w, w, w, w, r, w,
+  r, w, w, w, w, w, w, r,
+];
+
 const countdown = () => {
   if (--countdownValue) {
     // Fill in the rows
@@ -63,29 +86,39 @@ const countdown = () => {
     ];
 
     for (let i = 0; i < countdownValue; i++) {
-      matrix[i] = [255, 255, 255];
+      matrix[i] = w;
     }
 
     updateMatrix(matrix);
   } else {
+    flashX();
     clearInterval(timer);
   }
+}
+
+const flashX = () => {
+  updateMatrix(redMatrix);
+  setTimeout(() => {
+    updateMatrix(emptyMatrix);
+    setTimeout(() => {
+      updateMatrix(redMatrix);
+      setTimeout(() => {
+        updateMatrix(emptyMatrix);
+        setTimeout(() => {
+          updateMatrix(redMatrix);
+          setTimeout(() => {
+            updateMatrix(emptyMatrix);
+          }, 250);
+        }, 250);
+      }, 250);
+    }, 250);
+  }, 250);
 }
 
 const cancel = () => {
   if (timer) {
     clearInterval(timer);
-    let matrix = [
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
-    ];
-    updateMatrix(matrix);
+    flashX();
   }
 }
 
