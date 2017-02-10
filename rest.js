@@ -1,5 +1,6 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const pi = require('./pi');
+const app = express();
 
 let activeSession = null;
 let sessionTimeout = null;
@@ -32,8 +33,10 @@ const startSession = () => {
       console.log('session time out');
       killSession();
     }
-  }, 1200000);
+  }, 60000);
   console.log('session started');
+
+  pi.startCountdown();
 };
 
 const isAuthenticated = (session) => {
@@ -54,9 +57,10 @@ const isSessionValid = (session, user) => {
 app.post('/api/auth/fingerprint/:user', (req, res) => {
   const user = req.params.user;
   console.log(`received fingerprint auth request for: ${user}`);
-  if (isSessionValid(activeSession, user)) {
+  if (isSessionValid(activeSession, user) && !activeSession.fingerprint) {
     activeSession.fingerprint = true;
     console.log(`fingerprint authenticated for: ${user}`);
+    pi.sendMessage(`fingerprint: ${user}`);
   }
   res.sendStatus(200);
 });
@@ -64,9 +68,10 @@ app.post('/api/auth/fingerprint/:user', (req, res) => {
 app.post('/api/auth/voice/:user', (req, res) => {
   const user = req.params.user;
   console.log(`received voice auth request for: ${user}`);
-  if (isSessionValid(activeSession, user)) {
+  if (isSessionValid(activeSession, user) && !activeSession.voice) {
     activeSession.voice = true;
     console.log(`voice authenticated for: ${user}`);
+    pi.sendMessage(`voice: ${user}`);
   } else {
     console.log(`no session for: ${user}`);
   }
@@ -76,9 +81,10 @@ app.post('/api/auth/voice/:user', (req, res) => {
 app.post('/api/auth/face/:user', (req, res) => {
   const user = req.params.user;
   console.log(`received face auth request for: ${user}`);
-  if (isSessionValid(activeSession, user)) {
+  if (isSessionValid(activeSession, user) && !activeSession.face) {
     activeSession.face = true;
     console.log(`face authenticated for: ${user}`);
+    pi.sendMessage(`face: ${user}`);
   } else {
     console.log(`no session for: ${user}`);
   }
