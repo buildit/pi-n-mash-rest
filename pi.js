@@ -140,14 +140,14 @@ const updateStatus = (face, voice, finger) => {
 const showCheck = () => {
   cancel();
   let matrix = [
-    e, e, e, e, e, e, e, e,
-    e, e, e, e, e, e, e, e,
-    e, e, e, e, e, e, e, g,
-    e, e, e, e, e, e, g, e,
-    e, e, e, e, e, g, e, e,
-    g, e, e, e, g, e, e, e,
-    e, g, e, g, e, e, e, e,
     e, e, g, e, e, e, e, e,
+    e, g, e, e, e, e, e, e,
+    g, e, e, e, e, e, e, e,
+    e, g, e, e, e, e, e, e,
+    e, e, g, e, e, e, e, e,
+    e, e, e, g, e, e, e, e,
+    e, e, e, e, g, e, e, e,
+    e, e, e, e, e, g, e, e,
   ];
   updateMatrix(matrix);
 }
