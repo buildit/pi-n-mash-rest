@@ -5,6 +5,8 @@ const app = express();
 let activeSession = null;
 let sessionTimeout = null;
 
+pi.clearMatrix();
+
 const killSession = () => {
   if (sessionTimeout) {
     clearTimeout(sessionTimeout);
@@ -13,6 +15,7 @@ const killSession = () => {
   if (activeSession) {
     activeSession = null;
     console.log('killing session');
+    pi.fail();
   } else {
     console.log('no session');
   }
@@ -43,6 +46,14 @@ const isAuthenticated = (session) => {
   return (session && session.fingerprint && session.voice && session.face);
 };
 
+const isAuthenticationComplete = (session) => {
+  if (isAuthenticated(session)) {
+    pi.showCheck();
+    // Start a 10s timer to complete
+
+  }
+}
+
 const isSessionValid = (session, user) => {
   if (session && user) {
     if (session.user === null) {
@@ -60,7 +71,8 @@ app.post('/api/auth/fingerprint/:user', (req, res) => {
   if (isSessionValid(activeSession, user) && !activeSession.fingerprint) {
     activeSession.fingerprint = true;
     console.log(`fingerprint authenticated for: ${user}`);
-    pi.sendMessage(`fingerprint: ${user}`);
+    pi.updateStatus(null, null, true);
+    isAuthenticationComplete(activeSession);
   }
   res.sendStatus(200);
 });
@@ -71,7 +83,8 @@ app.post('/api/auth/voice/:user', (req, res) => {
   if (isSessionValid(activeSession, user) && !activeSession.voice) {
     activeSession.voice = true;
     console.log(`voice authenticated for: ${user}`);
-    pi.sendMessage(`voice: ${user}`);
+    pi.updateStatus(null, true, null);
+    isAuthenticationComplete(activeSession);
   } else {
     console.log(`no session for: ${user}`);
   }
@@ -84,7 +97,8 @@ app.post('/api/auth/face/:user', (req, res) => {
   if (isSessionValid(activeSession, user) && !activeSession.face) {
     activeSession.face = true;
     console.log(`face authenticated for: ${user}`);
-    pi.sendMessage(`face: ${user}`);
+    pi.updateStatus(true, null, null);
+    isAuthenticationComplete(activeSession);
   } else {
     console.log(`no session for: ${user}`);
   }

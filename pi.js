@@ -44,11 +44,14 @@ let countdownValue = 0;
 const startCountdown = () => {
   countdownValue = 60;
   timer = setInterval(countdown, 1000);
+  countdown();
 }
 
 const e = [0,0,0];
 const w = [255,255,255];
 const r = [255,0,0];
+const g = [0,255,0];
+let status = [r, r, r];
 
 const emptyMatrix = [
   e, e, e, e, e, e, e, e,
@@ -82,7 +85,7 @@ const countdown = () => {
       e, e, e, e, e, e, e, e,
       e, e, e, e, e, e, e, e,
       e, e, e, e, e, e, e, e,
-      e, e, e, e, e, e, e, e,
+      e, e, e, e, e, status[0], status[1], status[2],
     ];
 
     for (let i = 0; i < countdownValue; i++) {
@@ -93,6 +96,7 @@ const countdown = () => {
   } else {
     flashX();
     clearInterval(timer);
+    status = [r, r, r];
   }
 }
 
@@ -118,10 +122,49 @@ const flashX = () => {
 const cancel = () => {
   if (timer) {
     clearInterval(timer);
-    flashX();
+    status = [r, r, r];
+    return true;
   }
+  return false;
+}
+
+const updateStatus = (face, voice, finger) => {
+  if (face !== null )
+    status[0] = face ? g : r;
+  if (voice !== null )
+    status[1] = voice ? g : r;
+  if (finger !== null )
+    status[2] = finger ? g : r;
+};
+
+const showCheck = () => {
+  cancel();
+  let matrix = [
+    e, e, e, e, e, e, e, e,
+    e, e, e, e, e, e, e, e,
+    e, e, e, e, e, e, e, g,
+    e, e, e, e, e, e, g, e,
+    e, e, e, e, e, g, e, e,
+    g, e, e, e, g, e, e, e,
+    e, g, e, g, e, e, e, e,
+    e, e, g, e, e, e, e, e,
+  ];
+  updateMatrix(matrix);
+}
+
+const clearMatrix = () => {
+  cancel();
+  updateMatrix(emptyMatrix);
+}
+
+const fail = () => {
+  cancel();
+  flashX();
 }
 
 exports.sendMessage = sendMessage;
 exports.startCountdown = startCountdown;
-exports.cancel = cancel;
+exports.fail = fail;
+exports.updateStatus = updateStatus;
+exports.showCheck = showCheck;
+exports.clearMatrix = clearMatrix;
