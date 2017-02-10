@@ -12,9 +12,8 @@ const killSession = () => {
   if (activeSession) {
     activeSession = null;
     console.log('killing session');
-  }
-  else {
-    console.log(`no session for: ${req.params.user}`);
+  } else {
+    console.log('no session');
   }
 };
 
@@ -90,11 +89,19 @@ app.post('/api/auth/motion', (req, res) => {
   res.sendStatus(200);
 });
 
+app.get('/api/auth/:user', (req, res) => {
+  if (isSessionValid(activeSession, req.params.user) && isAuthenticated(activeSession) ) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(401);
+  }
+});
+
 app.delete('/api/auth', (req, res) => {
   killSession();
   res.sendStatus(200);
 });
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Example app listening on port 3000!');
 });
